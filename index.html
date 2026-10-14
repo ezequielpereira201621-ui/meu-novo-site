@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light only">
+<title>Supermercado Todo Dia</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{
+  --laranja:#0D3B8C;
+  --laranja-escuro:#082A66;
+  --vermelho:#E30613;
+  --amarelo:#FFC72C;
+  --bg:#F5F5F3;
+  --card:#ffffff;
+  --texto:#222222;
+  --texto-claro:#6b6b6b;
+  --verde-whats:#25D366;
+  color-scheme: light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+html{color-scheme: light;}
+html{scroll-padding-top:env(safe-area-inset-top,0px);}
+*{box-sizing:border-box; margin:0; padding:0;}
+body{
+  font-family:'Segoe UI', Arial, sans-serif;
+  background:var(--bg);
+  color:var(--texto);
+  height:100%;
+  overflow-x:hidden;
+}
+
+/* ===== TOPO ===== */
+.topo-info{
+  background:var(--vermelho);
+  color:#fff;
+  text-align:center;
+  font-size:13px;
+  padding:6px 10px;
+  padding-top:calc(6px + env(safe-area-inset-top,0px));
+}
+header{
+  background:var(--laranja);
+  position:sticky; top:0; z-index:50;
+  padding:12px 16px;
+  box-shadow:0 2px 8px rgba(0,0,0,.15);
+}
+.header-inner{
+  max-width:1200px; margin:0 auto;
+  display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+}
+.logo{
+  display:flex; align-items:center; gap:8px;
+  color:#fff; font-weight:800; font-size:22px; letter-spacing:.5px;
+  white-space:nowrap;
+}
+.logo-selo{
+  background:#fff; border-radius:10px; padding:4px 10px;
+  display:flex; align-items:center; height:44px;
+}
+.logo-selo img{ height:100%; width:auto; display:block; }
+.logo .bolinha{
+  width:40px;height:40px;border-radius:50%;
+  background:var(--amarelo); color:var(--laranja-escuro);
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px; font-weight:900;
+}
+.busca-wrap{flex:1; min-width:180px; position:relative;}
+#busca{
+  width:100%; padding:10px 40px 10px 14px; border:none; border-radius:24px;
+  font-size:15px; outline:none;
+}
+.busca-wrap svg{position:absolute; right:12px; top:50%; transform:translateY(-50%); opacity:.6;}
+.btn-whats{
+  background:var(--verde-whats); color:#fff; border:none; border-radius:24px;
+  padding:10px 18px; font-weight:700; font-size:14px; display:flex; align-items:center; gap:6px;
+  cursor:pointer; white-space:nowrap;
+  position:relative;
+}
+.badge-carrinho{
+  position:absolute; top:-6px; right:-6px; background:var(--vermelho); color:#fff;
+  border-radius:50%; width:20px; height:20px; font-size:11px;
+  display:flex; align-items:center; justify-content:center; font-weight:800;
+}
+
+/* ===== BARRA DE SETORES ===== */
+.setores{
+  background:#fff; overflow-x:auto; white-space:nowrap;
+  padding:10px 16px; box-shadow:0 2px 4px rgba(0,0,0,.06);
+  display:flex; gap:22px;
+}
+.setores a{
+  color:var(--texto); text-decoration:none; font-size:14px; font-weight:600;
+  padding-bottom:4px; border-bottom:3px solid transparent;
+}
+.setores a:hover{border-color:var(--laranja);}
+
+/* ===== BANNER / CARROSSEL ===== */
+.banner-secao{ max-width:1200px; margin:18px auto; padding:0 16px; }
+.carrossel{
+  position:relative; height:clamp(220px, 55vw, 340px); border-radius:14px; overflow:hidden;
+  display:flex; align-items:center; justify-content:center; color:#fff; text-align:center;
+}
+.slide{
+  position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  opacity:0; transition:opacity .6s ease; padding:20px;
+}
+.slide.ativo{opacity:1;}
+.slide .selo{
+  background:var(--amarelo); color:var(--vermelho); font-weight:800; font-size:13px;
+  padding:4px 14px; border-radius:20px; margin-bottom:10px; letter-spacing:.5px;
+}
+.slide h2{font-size:clamp(22px,4vw,36px); margin-bottom:6px;}
+.slide p{font-size:clamp(13px,2vw,16px); opacity:.95;}
+.s1{background:linear-gradient(135deg,var(--laranja),var(--laranja-escuro));}
+.s2{background:linear-gradient(135deg,var(--vermelho),#8a1a1f);}
+.s3{background:linear-gradient(135deg,#E8A400,var(--laranja));}
+.slide-img{background-size:cover; background-position:center top;}
+.slide-img::before{
+  content:""; position:absolute; inset:0;
+  background:linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.65));
+}
+.slide-img .selo, .slide-img h2, .slide-img p, .slide-img .contagem{position:relative; z-index:1;}
+.contagem{
+  display:flex; gap:10px; margin-top:10px;
+}
+.contagem .bloco{
+  background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.4);
+  border-radius:10px; padding:8px 14px; text-align:center; min-width:56px;
+  backdrop-filter:blur(2px);
+}
+.contagem .bloco strong{display:block; font-size:22px; font-weight:900;}
+.contagem .bloco span{font-size:10px; text-transform:uppercase; opacity:.9;}
+.dots{position:absolute; bottom:10px; display:flex; gap:6px; left:50%; transform:translateX(-50%);}
+.dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.5);}
+.dot.on{background:#fff;}
+
+/* ===== PRODUTOS ===== */
+.secao-titulo{
+  max-width:1200px; margin:26px auto 12px; padding:0 16px;
+  display:flex; align-items:center; gap:10px;
+}
+.secao-titulo h3{font-size:20px; font-weight:800;}
+.secao-titulo .linha{flex:1; height:3px; background:var(--laranja); border-radius:2px; opacity:.25;}
+.grid-produtos{
+  max-width:1200px; margin:0 auto; padding:0 16px 10px;
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:16px;
+}
+.produto-card{
+  background:var(--card); border-radius:12px; padding:14px; position:relative;
+  box-shadow:0 2px 6px rgba(0,0,0,.08); display:flex; flex-direction:column; gap:8px;
+  transition:transform .15s;
+}
+.produto-card:hover{transform:translateY(-3px);}
+.produto-tag{
+  position:absolute; top:10px; left:10px; background:var(--vermelho); color:#fff;
+  font-size:11px; font-weight:800; padding:3px 8px; border-radius:6px;
+}
+.produto-img{
+  height:100px; border-radius:8px;
+  display:flex; align-items:center; justify-content:center; font-size:38px;
+}
+.produto-titulo{font-size:14px; font-weight:700; min-height:36px;}
+.produto-preco-antigo{font-size:12px; color:var(--texto-claro); text-decoration:line-through;}
+.produto-preco{font-size:20px; font-weight:900; color:var(--laranja-escuro);}
+.produto-preco span{font-size:12px; font-weight:600;}
+.btn-add{
+  background:var(--laranja); color:#fff; border:none; border-radius:8px;
+  padding:8px; font-weight:700; font-size:13px; cursor:pointer;
+}
+.btn-add:active{background:var(--laranja-escuro);}
+
+/* ===== TIRA DE VANTAGENS ===== */
+.vantagens{
+  background:var(--card); max-width:1200px; margin:30px auto; padding:20px 16px; border-radius:14px;
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:16px; text-align:center;
+}
+.vantagens div{font-size:13px; font-weight:600;}
+.vantagens .icone{font-size:26px; display:block; margin-bottom:6px;}
+
+.card-localizacao{
+  grid-column:1 / -1;
+  background:linear-gradient(135deg,var(--laranja),var(--laranja-escuro));
+  color:#fff; border-radius:12px; padding:18px; text-align:left;
+  display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:14px;
+}
+.card-localizacao .loc-info{display:flex; align-items:flex-start; gap:12px;}
+.card-localizacao .loc-icone{font-size:30px;}
+.card-localizacao h4{font-size:15px; font-weight:800; margin-bottom:4px;}
+.card-localizacao p{font-size:13px; opacity:.95; font-weight:500;}
+.card-localizacao .loc-status{
+  display:flex; align-items:center; gap:6px; font-size:12px; font-weight:700;
+  background:rgba(255,255,255,.18); padding:6px 12px; border-radius:20px;
+}
+.bolinha-viva{
+  width:8px; height:8px; border-radius:50%; background:#3CE573;
+  box-shadow:0 0 0 0 rgba(60,229,115,.7);
+  animation:pulsar 1.6s infinite;
+}
+@keyframes pulsar{
+  0%{box-shadow:0 0 0 0 rgba(60,229,115,.6);}
+  70%{box-shadow:0 0 0 8px rgba(60,229,115,0);}
+  100%{box-shadow:0 0 0 0 rgba(60,229,115,0);}
+}
+.btn-mapa{
+  background:#fff; color:var(--laranja-escuro); border:none; border-radius:20px;
+  padding:9px 16px; font-weight:800; font-size:13px; cursor:pointer; text-decoration:none;
+  white-space:nowrap;
+}
+
+/* ===== RODAPÉ ===== */
+footer{
+  background:#222; color:#ddd; margin-top:30px; padding:30px 16px 20px;
+}
+.footer-inner{max-width:1200px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:20px;}
+footer h4{color:#fff; margin-bottom:10px; font-size:15px;}
+footer p, footer a{color:#bbb; font-size:13px; text-decoration:none; line-height:1.8; display:block;}
+.copy{text-align:center; font-size:12px; color:#888; margin-top:20px;}
+
+/* ===== CARRINHO FLUTUANTE MOBILE ===== */
+.rodape-carrinho{
+  position:fixed; left:0; right:0; bottom:0; background:var(--vermelho); color:#fff;
+  display:none; justify-content:space-between; align-items:center;
+  padding:12px 18px; padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));
+  z-index:60; font-weight:700; font-size:14px; cursor:pointer;
+}
+.rodape-carrinho.ativo{display:flex;}
+.rodape-carrinho button{background:#fff; color:var(--vermelho); border:none; border-radius:20px; padding:8px 16px; font-weight:800;}
+
+/* ===== PAINEL DO CARRINHO ===== */
+.overlay-carrinho{
+  position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:70;
+  display:none; align-items:flex-start; justify-content:flex-end;
+}
+.overlay-carrinho.aberto{display:flex;}
+.painel-carrinho{
+  background:var(--bg); width:min(380px,100%); height:100%;
+  padding:18px; padding-top:calc(18px + env(safe-area-inset-top,0px));
+  padding-bottom:calc(18px + env(safe-area-inset-bottom,0px));
+  overflow-y:auto; display:flex; flex-direction:column; gap:12px;
+}
+.painel-topo{display:flex; align-items:center; justify-content:space-between;}
+.painel-topo h3{font-size:18px;}
+.fechar-painel{background:none; border:none; font-size:22px; cursor:pointer; color:var(--texto); line-height:1;}
+.item-carrinho{
+  background:var(--card); border-radius:10px; padding:10px 12px;
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+}
+.item-carrinho .info{font-size:13px;}
+.item-carrinho .info strong{display:block; font-size:14px;}
+.item-carrinho button{
+  background:none; border:none; color:var(--vermelho); font-size:18px; cursor:pointer; font-weight:800;
+}
+.carrinho-vazio{text-align:center; color:var(--texto-claro); font-size:14px; padding:30px 10px;}
+.painel-total{
+  margin-top:auto; border-top:1px solid rgba(0,0,0,.1); padding-top:12px;
+  display:flex; justify-content:space-between; font-weight:800; font-size:16px;
+}
+.btn-finalizar{
+  background:var(--verde-whats); color:#fff; border:none; border-radius:24px;
+  padding:12px; font-weight:800; font-size:15px; cursor:pointer;
+}
+
+/* ===== HORTIFRUTI POR PESO ===== */
+.peso-box{display:flex; align-items:center; justify-content:center; gap:6px; margin:6px 0; font-size:13px; font-weight:700;}
+.peso-box select{border:1px solid var(--borda, #d5dbe6); border-radius:8px; padding:6px 4px; font-size:14px; font-weight:700; background:#fff; color:inherit; max-width:70px;}
+.peso-total{font-size:12px; color:var(--texto-claro); text-align:center; min-height:16px;}
+
+/* ===== MODAL DO PEDIDO (WhatsApp) ===== */
+.modal-pedido{position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:90; display:none; align-items:center; justify-content:center; padding:16px;}
+.modal-pedido.aberto{display:flex;}
+.modal-pedido .caixa{background:var(--bg); border-radius:14px; width:min(420px,100%); max-height:90vh; overflow-y:auto; padding:18px; display:flex; flex-direction:column; gap:10px;}
+.modal-pedido h3{font-size:18px;}
+.modal-pedido pre{background:var(--card); border-radius:10px; padding:10px; font-family:inherit; font-size:13px; white-space:pre-wrap; word-break:break-word; max-height:40vh; overflow-y:auto;}
+.modal-pedido a.btn-finalizar{display:block; text-align:center; text-decoration:none;}
+.modal-pedido .btn-sec{background:var(--card); color:var(--texto); border:none; border-radius:24px; padding:11px; font-weight:800; font-size:14px; cursor:pointer;}
+.modal-pedido .num{font-size:12px; text-align:center; color:var(--texto-claro);}
+
+/* ===== FORMA DE PAGAMENTO ===== */
+.pagamento-titulo{font-size:14px; font-weight:800; margin-top:4px;}
+.opcoes-pagamento{display:grid; grid-template-columns:repeat(2,1fr); gap:8px;}
+.opcao-pagamento{
+  background:var(--card); border:2px solid transparent; border-radius:10px;
+  padding:10px 8px; text-align:center; font-size:12px; font-weight:700; cursor:pointer;
+  color:var(--texto);
+}
+.opcao-pagamento .ic{display:block; font-size:20px; margin-bottom:4px;}
+.opcao-pagamento.selecionada{border-color:var(--laranja); background:#e8eff9; color:var(--laranja-escuro);}
+.aviso-pagamento{
+  font-size:12px; background:#e8eff9; color:var(--laranja-escuro); border-radius:8px;
+  padding:10px; line-height:1.5;
+}
+.caixa-pix{
+  background:var(--card); border-radius:10px; padding:14px; text-align:center;
+  display:flex; flex-direction:column; align-items:center; gap:8px;
+}
+.caixa-pix #qrcodePix{background:#fff; padding:8px; border-radius:8px;}
+.btn-gerar-pix{
+  background:var(--laranja); color:#fff; border:none; border-radius:20px;
+  padding:9px 16px; font-weight:800; font-size:13px; cursor:pointer;
+}
+.pix-copiar{
+  font-size:11px; word-break:break-all; background:#f0f0f0; color:#333;
+  padding:8px; border-radius:6px; width:100%; text-align:left;
+}
+.btn-copiar-pix{
+  background:none; border:1px solid var(--laranja); color:var(--laranja-escuro);
+  border-radius:16px; padding:6px 12px; font-size:12px; font-weight:700; cursor:pointer;
+}
+
+/* ===== TRABALHE CONOSCO / TESTE ===== */
+.painel-trabalhe{
+  background:var(--bg); width:min(460px,100%); height:100%; margin-left:auto;
+  padding:18px; padding-top:calc(18px + env(safe-area-inset-top,0px));
+  padding-bottom:calc(18px + env(safe-area-inset-bottom,0px));
+  overflow-y:auto; display:flex; flex-direction:column; gap:14px;
+}
+.tc-barra{height:6px; background:#e2e2e2; border-radius:4px; overflow:hidden;}
+.tc-barra-preenchida{height:100%; background:var(--laranja); transition:width .3s;}
+.tc-card{background:var(--card); border-radius:12px; padding:16px; display:flex; flex-direction:column; gap:12px;}
+.tc-categoria{font-size:11px; font-weight:800; text-transform:uppercase; color:var(--laranja-escuro); letter-spacing:.5px;}
+.tc-pergunta{font-size:16px; font-weight:700; line-height:1.4;}
+.tc-opcao{
+  background:var(--bg); border:2px solid transparent; border-radius:10px; padding:12px 14px;
+  font-size:14px; cursor:pointer; text-align:left;
+}
+.tc-opcao.selecionada{border-color:var(--laranja); background:#e8eff9; font-weight:700;}
+.tc-nav{display:flex; justify-content:space-between; gap:10px;}
+.tc-btn{
+  border:none; border-radius:20px; padding:11px 20px; font-weight:800; font-size:14px; cursor:pointer;
+}
+.tc-btn-voltar{background:var(--card); color:var(--texto); border:1px solid #ddd;}
+.tc-btn-avancar{background:var(--laranja); color:#fff;}
+.tc-btn-avancar:disabled{opacity:.4; cursor:not-allowed;}
+.tc-resultado{text-align:center; display:flex; flex-direction:column; gap:14px; align-items:center;}
+.tc-porcentagem{font-size:48px; font-weight:900; color:var(--laranja-escuro);}
+.tc-msg-aprovado{background:#e8f7ee; color:#1e7d3a; border-radius:10px; padding:14px; font-size:14px; line-height:1.5;}
+.tc-msg-reprovado{background:#f5f5f5; color:var(--texto-claro); border-radius:10px; padding:14px; font-size:14px; line-height:1.5;}
+.tc-campo-telefone{
+  width:100%; padding:12px 14px; border:2px solid #ddd; border-radius:10px; font-size:15px; margin-top:6px;
+}
+.tc-enviado{color:#1e7d3a; font-weight:700; font-size:14px;}
+
+@media (max-width:768px){
+  .logo{font-size:18px;}
+  .setores{gap:14px;}
+  .grid-produtos{grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:10px;}
+  .produto-img{height:80px; font-size:30px;}
+}
+</style>
+</head>
+<body>
+
+<div class="topo-info">🚚 Entrega hoje mesmo em Bom Jesus – PI &nbsp;|&nbsp; Rua São Miguel, CEP 64900-000 &nbsp;|&nbsp; Peça pelo WhatsApp</div>
+
+<header>
+  <div class="header-inner">
+    <div class="logo"><span class="logo-selo"><img src="imagens/imagem-01.jpg" alt="Supermercado Todo Dia"></span></div>
+    <div class="busca-wrap">
+      <input id="busca" type="text" placeholder="Buscar produtos, marcas, ofertas...">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#333" stroke-width="2"/><path d="M21 21l-4-4" stroke="#333" stroke-width="2" stroke-linecap="round"/></svg>
+    </div>
+    <button class="btn-whats" onclick="toggleCarrinho()">
+      🛒 Carrinho <span class="badge-carrinho" id="badge">0</span>
+    </button>
+  </div>
+</header>
+
+<nav class="setores">
+  <a href="#ofertas">Ofertas</a>
+  <a href="#hortifruti">Hortifruti</a>
+  <a href="#acougue">Açougue</a>
+  <a href="#massas">Massas</a>
+  <a href="#temperos">Temperos Naturais</a>
+  <a href="#bebidas">Bebidas</a>
+  <a href="#limpeza">Limpeza</a>
+  <a href="#higiene">Higiene Pessoal</a>
+  <a href="#biscoito">Biscoitos</a>
+  <a href="#mercearia">Mercearia</a>
+  <a href="#laticinios">Frios e Laticínios</a>
+</nav>
+
+<section class="banner-secao">
+  <div class="carrossel" id="carrossel">
+    <div class="slide s1 ativo">
+      <div class="selo">ENCARTE DA SEMANA</div>
+      <h2>Ofertas imperdíveis toda semana</h2>
+      <p>Preço baixo todo dia, do jeito que você gosta</p>
+    </div>
+    <div class="slide s2">
+      <div class="selo">SÓ HOJE</div>
+      <h2>Até 30% OFF em Hortifruti</h2>
+      <p>Frutas e verduras fresquinhas direto do produtor</p>
+    </div>
+    <div class="slide s3">
+      <div class="selo">COMPRE PELO WHATSAPP</div>
+      <h2>Monte seu carrinho e receba em casa</h2>
+      <p>Rápido, fácil e sem sair de casa</p>
+    </div>
+    <div class="slide slide-img" style="background-image:url('imagens/imagem-02.jpg');">
+      <div class="selo">SORTEIO DE ANIVERSÁRIO — MATRIZ E FILIAL</div>
+      <h2>Serão 3 motos Aveloz e vários prêmios!</h2>
+      <p>Ar-fritadeira, freezer, TV, ventilador e muito mais</p>
+    </div>
+    <div class="slide slide-img" style="background-image:url('imagens/imagem-03.jpg');">
+      <div class="contagem" id="contagemRegressiva"></div>
+    </div>
+    <div class="dots">
+      <div class="dot on"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    </div>
+  </div>
+</section>
+
+<div id="semResultado" class="secao-titulo" style="display:none; text-align:center; justify-content:center;">
+  <p style="width:100%;">😕 Nenhum produto encontrado. Tente outro nome.</p>
+</div>
+
+<div class="secao-titulo" id="ofertas"><h3>🔥 Ofertas da semana</h3><div class="linha"></div></div>
+<div class="grid-produtos" id="grid-ofertas"></div>
+
+<div class="secao-titulo" id="hortifruti"><h3>🥬 Hortifruti <small style="font-weight:600; font-size:13px;">(preço por kg)</small></h3><div class="linha"></div></div>
+<div class="grid-produtos" id="grid-hortifruti"></div>
+
+<div class="secao-titulo" id="acougue"><h3>🥩 Açougue <small style="font-weight:600; font-size:13px;">(preço por kg, exceto as peças)</small></h3><div class="linha"></div></div>
+<div class="grid-produtos" id="grid-acougue"></div>
+
+<div class="secao-titulo" id="massas"><h3>🍝 Massas</h3><div class="linha"></div></div>
+<div class="grid-produtos" id="grid-massas"></div>
+
+<div class="secao-titulo" id="temperos"><h3>🌿 Temperos Naturais</h3><div class="linha"></div></div>
+<div class="grid-produtos" id="grid-temperos"></div>
+
+<div class="secao-titulo" id="bebidas"><h3>🥤 Bebidas</h3><div class="linha"></div></div>
+<div class="grid-produtos" id="grid-bebidas"></div>
+
+<div class="secao-titulo" id="limpeza"><h3>🧽 Limpeza</h3><div class="linha"></div></div>
+<div class="grid-produtos" id="grid-limpeza"></div>
+
+<div class="secao-titulo" id="higiene"><h3>🧴 Higiene Pessoal</h3><div class="linha"></div></div>
+<div class="grid-produtos" id="grid-higiene"></div>
+
+<div class="secao-titulo" id="biscoito"><h3>🍪 Biscoitos</h3><div class="linha"></div></div>
+<div class="grid-produtos" id="grid-biscoito"></div>
+
+<div class="secao-titulo" id="mercearia"><h3>🛒 Mercearia</h3><div class="linha"></div></div>
+<div class="grid-produtos" id="grid-mercearia"></div>
+
+<div class="secao-titulo" id="laticinios"><h3>🥛 Frios e Laticínios</h3><div class="linha"></div></div>
+<div class="grid-produtos" id="grid-laticinios"></div>
+
+<section class="vantagens">
+  <div class="card-localizacao">
+    <div class="loc-info">
+      <span class="loc-icone">📍</span>
+      <div>
+        <h4>Loja Todo Dia — Bom Jesus/PI</h4>
+        <p>Rua São Miguel — CEP 64900-000</p>
+        <p id="horaLoja" style="margin-top:4px; font-size:12px; opacity:.85;"></p>
+      </div>
+    </div>
+    <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+      <span class="loc-status"><span class="bolinha-viva"></span> Loja aberta agora</span>
+      <a class="btn-mapa" href="https://www.google.com/maps/search/?api=1&query=Rua+S%C3%A3o+Miguel,+Bom+Jesus+-+PI,+64900-000" target="_blank" rel="noopener">Ver rota 📍</a>
+    </div>
+  </div>
+  <a href="https://wa.me/5599984091703" target="_blank" rel="noopener" style="color:inherit; text-decoration:none; display:block;"><span class="icone">💬</span>Pedido direto pelo WhatsApp</a>
+  <div><span class="icone">💰</span>Preços baixos todos os dias</div>
+  <div><span class="icone">✅</span>Produtos selecionados com qualidade</div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <div>
+      <h4>TODO DIA</h4>
+      <p>Supermercado Todo Dia<br>Rua São Miguel — Bom Jesus – PI<br>CEP 64900-000</p>
+    </div>
+    <div>
+      <h4>Atendimento</h4>
+      <a href="#">WhatsApp: (99) 98409-1703</a>
+      <a href="#">Seg a Sáb: 7h às 21h</a>
+    </div>
+    <div>
+      <h4>Trabalhe Conosco</h4>
+      <a href="#" onclick="abrirTrabalheConosco(); return false;">📋 Fazer teste de admissão</a>
+    </div>
+  </div>
+  <div class="copy">© 2026 Supermercado Todo Dia — Todos os direitos reservados</div>
+</footer>
+
+<div class="rodape-carrinho" id="rodapeCarrinho" onclick="toggleCarrinho()">
+  <span id="rodapeTexto">0 itens no carrinho</span>
+  <button onclick="event.stopPropagation(); toggleCarrinho()">Ver carrinho</button>
+</div>
+
+<div class="overlay-carrinho" id="overlayCarrinho" onclick="if(event.target===this) toggleCarrinho()">
+  <div class="painel-carrinho">
+    <div class="painel-topo">
+      <h3>Seu carrinho</h3>
+      <button class="fechar-painel" onclick="toggleCarrinho()">✕</button>
+    </div>
+    <div id="listaCarrinho"></div>
+    <div class="painel-total">
+      <span>Total</span>
+      <span id="totalCarrinho">R$ 0,00</span>
+    </div>
+
+    <div class="pagamento-titulo">Forma de pagamento</div>
+    <div class="opcoes-pagamento">
+      <div class="opcao-pagamento" data-tipo="Dinheiro" onclick="selecionarPagamento('Dinheiro')"><span class="ic">💵</span>Dinheiro</div>
+      <div class="opcao-pagamento" data-tipo="Pix" onclick="selecionarPagamento('Pix')"><span class="ic">🔳</span>Pix</div>
+      <div class="opcao-pagamento" data-tipo="Cartão de Débito" onclick="selecionarPagamento('Cartão de Débito')"><span class="ic">💳</span>Débito</div>
+      <div class="opcao-pagamento" data-tipo="Cartão de Crédito" onclick="selecionarPagamento('Cartão de Crédito')"><span class="ic">💳</span>Crédito</div>
+    </div>
+
+    <div id="areaCartao" class="aviso-pagamento" style="display:none;">
+      Por segurança, não pedimos os dados do seu cartão aqui. O pagamento no cartão é feito na maquininha, na entrega ou na retirada.
+    </div>
+
+    <div id="areaPix" class="caixa-pix" style="display:none;">
+      <div id="qrcodePix"></div>
+      <button class="btn-gerar-pix" onclick="gerarQRCodePix()">Gerar QR Code Pix</button>
+      <div id="pixCopiaCola" style="display:none; width:100%; flex-direction:column; gap:6px; align-items:stretch;">
+        <div class="pix-copiar" id="pixCodigo"></div>
+        <button class="btn-copiar-pix" onclick="copiarCodigoPix()">Copiar código Pix</button>
+      </div>
+    </div>
+
+    <button class="btn-finalizar" onclick="finalizarPedido()">Finalizar pedido no WhatsApp</button>
+  </div>
+</div>
+
+<div class="modal-pedido" id="modalPedido">
+  <div class="caixa">
+    <h3>Seu pedido está pronto ✅</h3>
+    <pre id="textoPedido"></pre>
+    <a class="btn-finalizar" id="btnAbrirWhats" href="#" target="_blank" rel="noopener">Abrir WhatsApp e enviar</a>
+    <button class="btn-sec" onclick="copiarPedido()">Copiar pedido</button>
+    <div class="num">WhatsApp da loja: (99) 98409-1703</div>
+    <button class="btn-sec" onclick="fecharModalPedido()">Voltar ao carrinho</button>
+  </div>
+</div>
+
+<script>
+/* ===== DADOS DE PRODUTOS (placeholders — trocar por fotos e preços reais) ===== */
+const produtos = {
+  ofertas: [
+    {nome:"Arroz Branco 5kg", precoAntigo:"27,90", preco:"22,90", emoji:"🍚", tag:"-18%"},
+    {nome:"Óleo de Soja 900ml", precoAntigo:"8,50", preco:"6,99", emoji:"🛢️", tag:"OFERTA"},
+    {nome:"Refrigerante 2L", precoAntigo:"9,90", preco:"7,49", emoji:"🥤", tag:"-24%"},
+    {nome:"Detergente 500ml", precoAntigo:"3,50", preco:"2,49", emoji:"🧴", tag:"OFERTA"},
+  ],
+  hortifruti: [
+    {nome:"Abacate (1 kg)", preco:"6,90", emoji:"🥑", foto:"imagens/abacate-1-kg.jpg"},
+    {nome:"Abacaxi (1 kg)", preco:"5,90", emoji:"🍍", foto:"imagens/abacaxi-1-kg.jpg"},
+    {nome:"Abóbora (1 kg)", preco:"4,90", emoji:"🎃", foto:"imagens/abobora-1-kg.jpg"},
+    {nome:"Alface Crespa (1 kg)", preco:"11,90", emoji:"🥬", foto:"imagens/alface-crespa-1-kg.jpg"},
+    {nome:"Alface Lisa (1 kg)", preco:"11,90", emoji:"🥬", foto:"imagens/alface-lisa-1-kg.jpg"},
+    {nome:"Alho (1 kg)", preco:"29,90", emoji:"🧄", foto:"imagens/alho-1-kg.jpg"},
+    {nome:"Banana Maçã (1 kg)", preco:"4,99", emoji:"🍌", foto:"imagens/banana-maca-1-kg.jpg"},
+    {nome:"Berinjela (1 kg)", preco:"7,90", emoji:"🍆", foto:"imagens/berinjela-1-kg.jpg"},
+    {nome:"Cebola (1 kg)", preco:"4,29", emoji:"🧅", foto:"imagens/cebola-1-kg.jpg"},
+    {nome:"Cebola Roxa (1 kg)", preco:"7,99", emoji:"🧅", foto:"imagens/cebola-roxa-1-kg.jpg"},
+    {nome:"Couve (1 kg)", preco:"14,90", emoji:"🥬", foto:"imagens/couve-1-kg.jpg"},
+    {nome:"Goiaba (1 kg)", preco:"5,90", emoji:"🍈", foto:"imagens/goiaba-1-kg.jpg"},
+    {nome:"Laranja (1 kg)", preco:"3,99", emoji:"🍊", foto:"imagens/laranja-1-kg.jpg"},
+    {nome:"Limão Taiti (1 kg)", preco:"5,99", emoji:"🍋", foto:"imagens/limao-taiti-1-kg.jpg"},
+    {nome:"Melancia (1 kg)", preco:"3,49", emoji:"🍉", foto:"imagens/melancia-1-kg.jpg"},
+    {nome:"Pepino (1 kg)", preco:"4,50", emoji:"🥒", foto:"imagens/pepino-1-kg.jpg"},
+    {nome:"Pimentão (1 kg)", preco:"9,90", emoji:"🫑", foto:"imagens/pimentao-1-kg.jpg"},
+    {nome:"Tomate (1 kg)", preco:"6,49", emoji:"🍅", foto:"imagens/tomate-1-kg.jpg"},
+  ],
+  acougue: [
+    {nome:"Costela Bovina (kg)", preco:"22,90", emoji:"🥩", foto:"imagens/costela-bovina-kg.jpg"},
+    {nome:"Bisteca Suína (kg)", preco:"19,90", emoji:"🥩", foto:"imagens/bisteca-suina-kg.jpg"},
+    {nome:"Chambaril", peca:true, preco:"14,90", emoji:"🥩", foto:"imagens/chambaril.jpg"},
+    {nome:"Carne Moída (kg)", preco:"23,90", emoji:"🥩", foto:"imagens/carne-moida-kg.jpg"},
+    {nome:"Coxinha da Asa Seara", peca:true, preco:"18,90", emoji:"🍗", foto:"imagens/coxinha-da-asa-seara.jpg"},
+    {nome:"Peito de Frango Friato", peca:true, preco:"18,90", emoji:"🍗", foto:"imagens/peito-de-frango-friato.jpg"},
+    {nome:"Coxa e Sobrecoxa Maringá (kg)", preco:"9,99", emoji:"🍗", foto:"imagens/coxa-e-sobrecoxa-maringa-kg.jpg"},
+    {nome:"Filé de Tilápia Sadia", peca:true, preco:"25,90", emoji:"🐟", foto:"imagens/file-de-tilapia-sadia.jpg"},
+    {nome:"Tilápia Inteira (kg)", preco:"16,90", emoji:"🐟", foto:"imagens/tilapia-inteira-kg.jpg"},
+    {nome:"Picanha Bovina (kg)", preco:"74,90", emoji:"🥩", foto:"imagens/picanha-bovina-kg.jpg"},
+    {nome:"Pintado (kg)", preco:"29,90", emoji:"🐟", foto:"imagens/pintado-kg.jpg"},
+    {nome:"Filé de Tilápia", peca:true, preco:"39,90", emoji:"🐟", foto:"imagens/file-de-tilapia.jpg"},
+  ],
+  massas: [
+    {nome:"Macarrão Espaguete 500g", preco:"4,49", emoji:"🍝"},
+    {nome:"Macarrão Parafuso 500g", preco:"4,29", emoji:"🍝"},
+    {nome:"Lasanha Pronta 600g", preco:"14,90", emoji:"🍱"},
+    {nome:"Macarrão Instantâneo (un)", preco:"2,49", emoji:"🍜"},
+  ],
+  temperos: [
+    {nome:"Alho (unid.)", preco:"1,99", emoji:"🧄"},
+    {nome:"Cheiro Verde (maço)", preco:"2,49", emoji:"🌿", foto:"imagens/cheiro-verde-maco.jpg"},
+    {nome:"Pimenta de Cheiro (100g)", preco:"3,49", emoji:"🌶️"},
+    {nome:"Colorau Natural (100g)", preco:"3,99", emoji:"🧂"},
+  ],
+  bebidas: [
+    {nome:"Refrigerante 2L", precoAntigo:"9,90", preco:"7,49", emoji:"🥤", tag:"OFERTA"},
+    {nome:"Suco Natural 1L", preco:"6,99", emoji:"🧃"},
+    {nome:"Água Mineral 1,5L", preco:"2,99", emoji:"💧"},
+    {nome:"Cerveja Lata (un)", preco:"3,49", emoji:"🍺"},
+    {nome:"Cerveja Skol Pilsen Lata 350ml", preco:"4,49", emoji:"🍺", foto:"imagens/cerveja-skol-pilsen-lata-350ml.jpg"},
+    {nome:"Fanta Guaraná Lata 350ml", preco:"4,99", emoji:"🥤", foto:"imagens/fanta-guarana-lata-350ml.jpg"},
+    {nome:"Guaraná Antarctica 1L", preco:"5,99", emoji:"🥤", foto:"imagens/guarana-antarctica-1l.jpg"},
+    {nome:"Guaraná Antarctica 2L", preco:"9,99", emoji:"🥤", foto:"imagens/guarana-antarctica-2l.jpg"},
+    {nome:"Red Bull Energy Drink 473ml", preco:"12,90", emoji:"⚡", foto:"imagens/red-bull-energy-drink-473ml.jpg"},
+    {nome:"Fanta Laranja 2L", preco:"9,99", emoji:"🍊", foto:"imagens/fanta-laranja-2l.jpg"},
+    {nome:"Fanta Uva 2L", preco:"9,99", emoji:"🍇", foto:"imagens/fanta-uva-2l.jpg"},
+    {nome:"Guaraná Antarctica 200ml", preco:"2,49", emoji:"🥤", foto:"imagens/guarana-antarctica-200ml.jpg"},
+    {nome:"Monster Energy 473ml", preco:"10,90", emoji:"⚡", foto:"imagens/monster-energy-473ml.jpg"},
+    {nome:"Cerveja Heineken Garrafa 330ml", preco:"6,99", emoji:"🍺", foto:"imagens/cerveja-heineken-garrafa-330ml.jpg"},
+    {nome:"Cerveja Heineken Lata 350ml", preco:"5,99", emoji:"🍺", foto:"imagens/cerveja-heineken-lata-350ml.jpg"},
+    {nome:"Fanta Uva 1,5L", preco:"7,99", emoji:"🍇", foto:"imagens/fanta-uva-1-5l.jpg"},
+    {nome:"Fanta Laranja Lata 350ml", preco:"4,99", emoji:"🍊", foto:"imagens/fanta-laranja-lata-350ml.jpg"},
+    {nome:"Guaraná Antarctica Lata 350ml", preco:"4,49", emoji:"🥤", foto:"imagens/guarana-antarctica-lata-350ml.jpg"},
+    {nome:"Guaraná Antarctica Zero Lata 350ml", preco:"4,49", emoji:"🥤", foto:"imagens/guarana-antarctica-zero-lata-350ml.jpg"},
+    {nome:"Cerveja Stella Artois Garrafa 330ml", preco:"7,99", emoji:"🍺", foto:"imagens/cerveja-stella-artois-garrafa-330ml.jpg"},
+    {nome:"Coca-Cola Sabor Original 200ml", preco:"3,49", emoji:"🥤", foto:"imagens/coca-cola-sabor-original-200ml.jpg"},
+    {nome:"Coca-Cola Sabor Original 2L", preco:"11,99", emoji:"🥤", foto:"imagens/coca-cola-sabor-original-2l.jpg"},
+    {nome:"Coca-Cola Sabor Original Lata 350ml", preco:"4,99", emoji:"🥤", foto:"imagens/coca-cola-sabor-original-lata-350ml.jpg"},
+    {nome:"Coca-Cola Zero Açúcar Lata 350ml", preco:"4,99", emoji:"🥤", foto:"imagens/coca-cola-zero-acucar-lata-350ml.jpg"},
+  ],
+  limpeza: [
+    {nome:"Lava Roupas Ísis 5L", preco:"18,90", emoji:"🧴", foto:"imagens/lava-roupas-isis-5l.jpg"},
+    {nome:"Desinfetante Dulago 2L", preco:"5,99", emoji:"🧼", foto:"imagens/desinfetante-dulago-2l.jpg"},
+    {nome:"Detergente Brilux 500ml", preco:"1,99", emoji:"🧴", foto:"imagens/detergente-brilux-500ml.jpg"},
+    {nome:"Sabão em Barra Minuano 800g", preco:"9,99", emoji:"🧺", foto:"imagens/sabao-em-barra-minuano-800g.jpg"},
+    {nome:"Sabão em Pó Tixan 400g", preco:"4,99", emoji:"🧺", foto:"imagens/sabao-em-po-tixan-400g.jpg"},
+    {nome:"Sabão em Pó Tixan Primavera 400g", preco:"5,99", emoji:"🧺", foto:"imagens/sabao-em-po-tixan-primavera-400g.jpg"},
+    {nome:"Água Sanitária FC 5L", preco:"12,90", emoji:"🧽", foto:"imagens/agua-sanitaria-fc-5l.jpg"},
+    {nome:"Água Sanitária Ypê 1L", preco:"6,49", emoji:"🧴", foto:"imagens/agua-sanitaria-ype-1l.jpg"},
+    {nome:"Água Sanitária Nutrilar 1L", preco:"4,99", emoji:"🧴", foto:"imagens/agua-sanitaria-nutrilar-1l.jpg"},
+    {nome:"Água Sanitária Nutrilar Floral 1L", preco:"4,99", emoji:"🧴", foto:"imagens/agua-sanitaria-nutrilar-floral-1l.jpg"},
+    {nome:"Água Sanitária Brilux 5L", preco:"13,90", emoji:"🧴", foto:"imagens/agua-sanitaria-brilux-5l.jpg"},
+    {nome:"Água Sanitária Brilux 1L", preco:"4,49", emoji:"🧴", foto:"imagens/agua-sanitaria-brilux-1l.jpg"},
+    {nome:"Amaciante Downy Concentrado 500ml", preco:"13,90", emoji:"🌸", foto:"imagens/amaciante-downy-concentrado-500ml.jpg"},
+    {nome:"Amaciante Comfort Concentrado 500ml", preco:"17,90", emoji:"🌸", foto:"imagens/amaciante-comfort-concentrado-500ml.jpg"},
+    {nome:"Desinfetante Azulim Perfumado 1L", preco:"6,99", emoji:"🧼", foto:"imagens/desinfetante-azulim-perfumado-1l.jpg"},
+    {nome:"Perfume de Ambiente UAU 500ml", preco:"5,99", emoji:"🌺", foto:"imagens/perfume-de-ambiente-uau-500ml.jpg"},
+    {nome:"Sabão em Pó Brilhante 1,6kg", preco:"17,90", emoji:"🧺", foto:"imagens/sabao-em-po-brilhante-1-6kg.jpg"},
+    {nome:"Sabão Minuano Coco 800g", preco:"8,99", emoji:"🧼", foto:"imagens/sabao-minuano-coco-800g.jpg"},
+  ],
+  higiene: [
+    {nome:"Sabonete Siene 85g", preco:"1,79", emoji:"🧼", foto:"imagens/sabonete-siene-85g.jpg"},
+    {nome:"Creme Dental Sorriso Dentes Brancos 120g", preco:"5,99", emoji:"🪥", foto:"imagens/creme-dental-sorriso-dentes-brancos-120g.jpg"},
+    {nome:"Papel Higiênico Sublime FD c/12", preco:"17,90", emoji:"🧻", foto:"imagens/papel-higienico-sublime-fd-c-12.jpg"},
+    {nome:"Papel Higiênico Fofinho FS c/24", preco:"26,90", emoji:"🧻", foto:"imagens/papel-higienico-fofinho-fs-c-24.jpg"},
+    {nome:"Máscara Elseve Hidra Hialurônico 300g", preco:"19,90", emoji:"🧴", foto:"imagens/mascara-elseve-hidra-hialuronico-300g.jpg"},
+    {nome:"Máscara Salon Line SOS Bomba 500g", preco:"16,90", emoji:"🧴", foto:"imagens/mascara-salon-line-sos-bomba-500g.jpg"},
+    {nome:"Lenço Umedecido Babysec Ultra Fresh 96un", preco:"14,90", emoji:"🧻", foto:"imagens/lenco-umedecido-babysec-ultra-fresh-96un.jpg"},
+    {nome:"Lenço Umedecido Huggies 96un", preco:"15,90", emoji:"🧻", foto:"imagens/lenco-umedecido-huggies-96un.jpg"},
+    {nome:"Creme Dental Colgate Tripla Ação 180g", preco:"8,99", emoji:"🪥", foto:"imagens/creme-dental-colgate-tripla-acao-180g.jpg"},
+    {nome:"Fralda Pampers Confort Sec XXG 52un", preco:"54,90", emoji:"👶", foto:"imagens/fralda-pampers-confort-sec-xxg-52un.jpg"},
+    {nome:"Lenço Umedecido Meu Bebê Recém Nascido 100un", preco:"12,90", emoji:"🧻", foto:"imagens/lenco-umedecido-meu-bebe-recem-nascido-100un.jpg"},
+    {nome:"Sabonete Lux Botanicals Rosas Francesas 85g", preco:"2,99", emoji:"🧼", foto:"imagens/sabonete-lux-botanicals-rosas-francesas-85g.jpg"},
+    {nome:"Máscara Salon Line SOS Cachos Óleo de Coco 500g", preco:"17,90", emoji:"🧴", foto:"imagens/mascara-salon-line-sos-cachos-oleo-de-coco-500g.jpg"},
+    {nome:"Sabonete Nivea Orquídeas 85g", preco:"2,79", emoji:"🧼", foto:"imagens/sabonete-nivea-orquideas-85g.jpg"},
+    {nome:"Fralda Geriátrica Soft Care XG 26un", preco:"39,90", emoji:"👴", foto:"imagens/fralda-geriatrica-soft-care-xg-26un.jpg"},
+    {nome:"Fralda MamyPoko Fralda-Calça G 28un", preco:"34,90", emoji:"👶", foto:"imagens/fralda-mamypoko-fralda-calca-g-28un.jpg"},
+    {nome:"Sabonete Nivea Erva Doce & Óleos 85g", preco:"2,79", emoji:"🧼", foto:"imagens/sabonete-nivea-erva-doce-oleos-85g.jpg"},
+    {nome:"Lenço Umedecido Bebê Limpinho Premium 140un", preco:"13,90", emoji:"🧻", foto:"imagens/lenco-umedecido-bebe-limpinho-premium-140un.jpg"},
+    {nome:"Gel Fixador Mirra's 235g", preco:"8,49", emoji:"💈", foto:"imagens/gel-fixador-mirra-s-235g.jpg"},
+    {nome:"Fralda MamyPoko Cuidado Real P 46un", preco:"36,90", emoji:"👶", foto:"imagens/fralda-mamypoko-cuidado-real-p-46un.jpg"},
+    {nome:"Lenço Umedecido Personal Soft & Protect 50un", preco:"11,90", emoji:"🧻", foto:"imagens/lenco-umedecido-personal-soft-protect-50un.jpg"},
+    {nome:"Fralda Personal Baby RN/P 44un", preco:"29,90", emoji:"👶", foto:"imagens/fralda-personal-baby-rn-p-44un.jpg"},
+    {nome:"Fralda Personal Soft & Protect G 60un", preco:"42,90", emoji:"👶", foto:"imagens/fralda-personal-soft-protect-g-60un.jpg"},
+    {nome:"Sabonete Líquido Johnson's Baby Glicerina Camomila 400ml", preco:"15,90", emoji:"🧴", foto:"imagens/sabonete-liquido-johnson-s-baby-glicerina-camomila-400ml.jpg"},
+    {nome:"Creme Dental Colgate Luminous White Brilliant 70g", preco:"12,90", emoji:"🪥", foto:"imagens/creme-dental-colgate-luminous-white-brilliant-70g.jpg"},
+    {nome:"Kit Seda Cachos Definidos Shampoo + Condicionador 325/190ml", preco:"19,90", emoji:"🧴", foto:"imagens/kit-seda-cachos-definidos-shampoo-condicionador-325-190ml.jpg"},
+    {nome:"Enxaguante Bucal Colgate Plax Ice 500ml", preco:"13,90", emoji:"🦷", foto:"imagens/enxaguante-bucal-colgate-plax-ice-500ml.jpg"},
+    {nome:"Sabonete Dove Pele Sensível 90g", preco:"3,49", emoji:"🧼", foto:"imagens/sabonete-dove-pele-sensivel-90g.jpg"},
+    {nome:"Creme Dental Colgate Sensitive Pro-Alívio 90g", preco:"14,90", emoji:"🪥", foto:"imagens/creme-dental-colgate-sensitive-pro-alivio-90g.jpg"},
+    {nome:"Enxaguante Bucal Colgate Sensitive Pro-Alívio 250ml", preco:"16,90", emoji:"🦷", foto:"imagens/enxaguante-bucal-colgate-sensitive-pro-alivio-250ml.jpg"},
+    {nome:"Kit Niely Gold Hidratação Icônica Shampoo + Condicionador 275/175ml", preco:"22,90", emoji:"🧴", foto:"imagens/kit-niely-gold-hidratacao-iconica-shampoo-condicionador-275-175ml.jpg"},
+    {nome:"Antisséptico Bucal Listerine Cool Mint 250ml", preco:"17,90", emoji:"🦷", foto:"imagens/antisseptico-bucal-listerine-cool-mint-250ml.jpg"},
+    {nome:"Desodorante Aerosol Rexona V8 150ml", preco:"12,90", emoji:"🧴", foto:"imagens/desodorante-aerosol-rexona-v8-150ml.jpg"},
+    {nome:"Kit Elseve Collagen Lifter Shampoo + Condicionador 200ml", preco:"29,90", emoji:"🧴", foto:"imagens/kit-elseve-collagen-lifter-shampoo-condicionador-200ml.jpg"},
+    {nome:"Kit TRESemmé Hidratação Profunda Shampoo + Condicionador 350/175ml", preco:"27,90", emoji:"🧴", foto:"imagens/kit-tresemme-hidratacao-profunda-shampoo-condicionador-350-175ml.jpg"},
+    {nome:"Kit Pantene Liso Extremo Shampoo + Condicionador 350/175ml", preco:"26,90", emoji:"🧴", foto:"imagens/kit-pantene-liso-extremo-shampoo-condicionador-350-175ml.jpg"},
+    {nome:"Kit Seda Cachos Definidos Shampoo + Condicionador 500/190ml", preco:"24,90", emoji:"🧴", foto:"imagens/kit-seda-cachos-definidos-shampoo-condicionador-500-190ml.jpg"},
+    {nome:"Desodorante Aerosol Rexona Cotton Dry 150ml", preco:"12,90", emoji:"🧴", foto:"imagens/desodorante-aerosol-rexona-cotton-dry-150ml.jpg"},
+    {nome:"Sabonete Líquido Johnson's Baby Glicerina Camomila 200ml", preco:"9,90", emoji:"🧴", foto:"imagens/sabonete-liquido-johnson-s-baby-glicerina-camomila-200ml.jpg"},
+  ],
+  biscoito: [
+    {nome:"Cream Cracker Estrela 350g", preco:"4,99", emoji:"🍪", foto:"imagens/cream-cracker-estrela-350g.jpg"},
+    {nome:"Biscoito Club Social Original", preco:"4,29", emoji:"🍪", foto:"imagens/biscoito-club-social-original.jpg"},
+    {nome:"Biscoito Club Social Presunto 141g", preco:"4,49", emoji:"🍪", foto:"imagens/biscoito-club-social-presunto-141g.jpg"},
+    {nome:"Biscoito Club Social Bacon & Provolone 141g", preco:"4,49", emoji:"🍪", foto:"imagens/biscoito-club-social-bacon-provolone-141g.jpg"},
+    {nome:"Biscoito Club Social Integral Tradicional", preco:"4,49", emoji:"🍪", foto:"imagens/biscoito-club-social-integral-tradicional.jpg"},
+    {nome:"Wafer Richester Amori Chocolate 80g", preco:"2,49", emoji:"🍫", foto:"imagens/wafer-richester-amori-chocolate-80g.jpg"},
+    {nome:"Biscoito Recheado Amori Tortinhas Limão 140g", preco:"2,99", emoji:"🍪", foto:"imagens/biscoito-recheado-amori-tortinhas-limao-140g.jpg"},
+    {nome:"Biscoito Recheado Richester Escureto 125g", preco:"2,99", emoji:"🍪", foto:"imagens/biscoito-recheado-richester-escureto-125g.jpg"},
+  ],
+  mercearia: [
+    {nome:"Café Santa Clara Extraforte 250g", preco:"7,99", emoji:"☕", foto:"imagens/cafe-santa-clara-extraforte-250g.jpg"},
+    {nome:"Arroz Racha Panela 5kg", preco:"24,90", emoji:"🍚", foto:"imagens/arroz-racha-panela-5kg.jpg"},
+    {nome:"Café Santa Clara Clássico 500g", preco:"13,90", emoji:"☕", foto:"imagens/cafe-santa-clara-classico-500g.jpg"},
+    {nome:"Café Kimimo 250g", preco:"6,99", emoji:"☕", foto:"imagens/cafe-kimimo-250g.jpg"},
+    {nome:"Flocão Dona Clara 500g", preco:"4,99", emoji:"🌽", foto:"imagens/flocao-dona-clara-500g.jpg"},
+    {nome:"Arroz Tio Urbano Seleção Especial 5kg", preco:"25,90", emoji:"🍚", foto:"imagens/arroz-tio-urbano-selecao-especial-5kg.jpg"},
+    {nome:"Arroz Tio João 5kg", preco:"27,90", emoji:"🍚", foto:"imagens/arroz-tio-joao-5kg.jpg"},
+    {nome:"Café Kimimo Pacote 250g", preco:"6,49", emoji:"☕", foto:"imagens/cafe-kimimo-pacote-250g.jpg"},
+    {nome:"Óleo de Soja Soya 900ml", preco:"7,49", emoji:"🫗", foto:"imagens/oleo-de-soja-soya-900ml.jpg"},
+    {nome:"Feijão Preto Kicaldo 1kg", preco:"8,49", emoji:"🫘", foto:"imagens/feijao-preto-kicaldo-1kg.jpg"},
+    {nome:"Óleo Liza 900ml", preco:"7,29", emoji:"🫗", foto:"imagens/oleo-liza-900ml.jpg"},
+    {nome:"Feijão Carioca Kicaldo 1kg", preco:"8,99", emoji:"🫘", foto:"imagens/feijao-carioca-kicaldo-1kg.jpg"},
+    {nome:"Açúcar Cristal Itajá 5kg", preco:"22,90", emoji:"🍬", foto:"imagens/acucar-cristal-itaja-5kg.jpg"},
+    {nome:"Farinha de Trigo Finna Tradicional 1kg", preco:"5,99", emoji:"🌾", foto:"imagens/farinha-de-trigo-finna-tradicional-1kg.jpg"},
+    {nome:"Café Santa Clara Premium 250g", preco:"9,99", emoji:"☕", foto:"imagens/cafe-santa-clara-premium-250g.jpg"},
+    {nome:"Mistura para Bolo Dona Benta Laranja", preco:"6,49", emoji:"🍰", foto:"imagens/mistura-para-bolo-dona-benta-laranja.jpg"},
+    {nome:"Açúcar Cristal Pérola 5kg", preco:"23,90", emoji:"🍬", foto:"imagens/acucar-cristal-perola-5kg.jpg"},
+    {nome:"Óleo de Soja Sinhá 900ml", preco:"7,49", emoji:"🫗", foto:"imagens/oleo-de-soja-sinha-900ml.jpg"},
+    {nome:"Flocão Maratá 500g", preco:"5,49", emoji:"🌽", foto:"imagens/flocao-marata-500g.jpg"},
+  ],
+  laticinios: [
+    {nome:"Iogurte Danone Morango 170g", preco:"3,49", emoji:"🥛", foto:"imagens/iogurte-danone-morango-170g.jpg"},
+    {nome:"Iogurte Danone Morango Bandeja 540g", preco:"11,99", emoji:"🥛", foto:"imagens/iogurte-danone-morango-bandeja-540g.jpg"},
+    {nome:"Iogurte Danone Morango 1,25kg", preco:"12,90", emoji:"🥛", foto:"imagens/iogurte-danone-morango-1-25kg.jpg"},
+    {nome:"Iogurte Itambé Zero Lactose Morango e Coco 510g", preco:"9,99", emoji:"🥛", foto:"imagens/iogurte-itambe-zero-lactose-morango-e-coco-510g.jpg"},
+    {nome:"Iogurte Itambé Zero Lactose Pedaços de Morango 450g", preco:"11,90", emoji:"🥛", foto:"imagens/iogurte-itambe-zero-lactose-pedacos-de-morango-450g.jpg"},
+    {nome:"Iogurte Ninho Zero Lactose Maçã e Banana 4un", preco:"8,99", emoji:"🥛", foto:"imagens/iogurte-ninho-zero-lactose-maca-e-banana-4un.jpg"},
+    {nome:"Iogurte Ninho Zero Lactose Morango", preco:"3,99", emoji:"🥛", foto:"imagens/iogurte-ninho-zero-lactose-morango.jpg"},
+    {nome:"Leite em Pó Ninho Zero Lactose", preco:"22,90", emoji:"🥫", foto:"imagens/leite-em-po-ninho-zero-lactose.jpg"},
+    {nome:"Shake YoPRO Chocolate 15g Proteínas 250ml", preco:"7,99", emoji:"💪", foto:"imagens/shake-yopro-chocolate-15g-proteinas-250ml.jpg"},
+    {nome:"Shake YoPRO Morango 15g Proteínas 250ml", preco:"7,99", emoji:"💪", foto:"imagens/shake-yopro-morango-15g-proteinas-250ml.jpg"},
+    {nome:"Margarina Primor Original com Sal 500g", preco:"8,49", emoji:"🧈", foto:"imagens/margarina-primor-original-com-sal-500g.jpg"},
+    {nome:"Margarina Primor Original com Sal 250g", preco:"4,99", emoji:"🧈", foto:"imagens/margarina-primor-original-com-sal-250g.jpg"},
+    {nome:"Margarina Delícia com Creme de Leite 1kg", preco:"14,90", emoji:"🧈", foto:"imagens/margarina-delicia-com-creme-de-leite-1kg.jpg"},
+    {nome:"Margarina Delícia com Creme de Leite 250g", preco:"5,99", emoji:"🧈", foto:"imagens/margarina-delicia-com-creme-de-leite-250g.jpg"},
+    {nome:"Margarina Qualy Cremosa sem Sal 500g", preco:"8,99", emoji:"🧈", foto:"imagens/margarina-qualy-cremosa-sem-sal-500g.jpg"},
+    {nome:"Margarina Qualy Cremosa sem Sal 250g", preco:"5,49", emoji:"🧈", foto:"imagens/margarina-qualy-cremosa-sem-sal-250g.jpg"},
+  ],
+};
+
+let carrinho = [];
+
+function montarGridPeso(id, lista){
+  /* hortifruti: cliente escolhe quilos e gramas */
+  const grid = document.getElementById(id);
+  const kgOpts = Array.from({length:21},(_,k)=>`<option value="${k}" ${k===1?'selected':''}>${k}</option>`).join('');
+  const gOpts = [0,50,100,150,200,250,300,350,400,450,500,550,600,650,700,750,800,850,900,950]
+    .map(g=>`<option value="${g}">${g}</option>`).join('');
+  grid.innerHTML = lista.map((p,i)=>{
+    const base = p.nome.replace(/ \((1 )?kg\)$/,'');
+    return `
+    <div class="produto-card" data-nome="${p.nome.toLowerCase()}">
+      ${p.tag ? `<span class="produto-tag">${p.tag}</span>` : ''}
+      <div class="produto-img" style="background:linear-gradient(135deg,#e8eff9,#d3e0f5); ${p.foto ? `background-image:url('${p.foto}'); background-size:contain; background-repeat:no-repeat; background-position:center;` : ''}">${p.foto ? '' : p.emoji}</div>
+      <div class="produto-titulo">${base}</div>
+      ${p.peca ? `
+      <div class="produto-preco">R$ ${p.preco} <span>/ peça</span></div>
+      <button class="btn-add" onclick="adicionarCarrinho('${base}','${p.preco}')">Adicionar</button>
+      ` : `
+      <div class="produto-preco">R$ ${p.preco} <span>/ kg</span></div>
+      <div class="peso-box">
+        <select id="${id}-kg-${i}" onchange="atualizarPeso('${id}',${i},${p.preco.replace(',','.')})">${kgOpts}</select> kg
+        <select id="${id}-g-${i}" onchange="atualizarPeso('${id}',${i},${p.preco.replace(',','.')})">${gOpts}</select> g
+      </div>
+      <div class="peso-total" id="${id}-total-${i}">Total: R$ ${p.preco}</div>
+      <button class="btn-add" onclick="adicionarPeso('${id}',${i},'${base}','${p.preco}')">Adicionar</button>
+      `}
+    </div>`;
+  }).join('');
+}
+function lerPeso(id,i){
+  const kg = parseInt(document.getElementById(id+'-kg-'+i).value,10) || 0;
+  const g = parseInt(document.getElementById(id+'-g-'+i).value,10) || 0;
+  return {kg:kg, g:g, total:kg + g/1000};
+}
+function atualizarPeso(id,i,precoKg){
+  const p = lerPeso(id,i);
+  document.getElementById(id+'-total-'+i).textContent =
+    p.total > 0 ? 'Total: R$ ' + (precoKg*p.total).toFixed(2).replace('.',',') : 'Escolha o peso';
+}
+function adicionarPeso(id,i,base,precoKg){
+  const p = lerPeso(id,i);
+  if(p.total <= 0){ document.getElementById(id+'-total-'+i).textContent = 'Escolha o peso'; return; }
+  let txt = '';
+  if(p.kg > 0 && p.g > 0) txt = p.kg + ' kg e ' + p.g + ' g';
+  else if(p.kg > 0) txt = p.kg + ' kg';
+  else txt = p.g + ' g';
+  const valor = (parseFloat(precoKg.replace(',','.')) * p.total).toFixed(2).replace('.',',');
+  adicionarCarrinho(base + ' — ' + txt, valor);
+}
+function montarGrid(id, lista, porPeso){
+  if(porPeso){ return montarGridPeso(id, lista); }
+  const grid = document.getElementById(id);
+  grid.innerHTML = lista.map((p,i)=>`
+    <div class="produto-card" data-nome="${p.nome.toLowerCase()}">
+      ${p.tag ? `<span class="produto-tag">${p.tag}</span>` : ''}
+      <div class="produto-img" style="background:linear-gradient(135deg,#e8eff9,#d3e0f5); ${p.foto ? `background-image:url('${p.foto}'); background-size:contain; background-repeat:no-repeat; background-position:center;` : ''}">${p.foto ? '' : p.emoji}</div>
+      <div class="produto-titulo">${p.nome}</div>
+      ${p.precoAntigo ? `<div class="produto-preco-antigo">R$ ${p.precoAntigo}</div>` : ''}
+      <div class="produto-preco">R$ ${p.preco}</div>
+      <button class="btn-add" onclick="adicionarCarrinho('${p.nome.replace(/'/g,"")}','${p.preco}')">Adicionar</button>
+    </div>
+  `).join('');
+}
+montarGrid('grid-ofertas', produtos.ofertas);
+montarGrid('grid-hortifruti', produtos.hortifruti, true);
+montarGrid('grid-acougue', produtos.acougue, true);
+montarGrid('grid-massas', produtos.massas);
+montarGrid('grid-temperos', produtos.temperos);
+montarGrid('grid-bebidas', produtos.bebidas);
+montarGrid('grid-limpeza', produtos.limpeza);
+montarGrid('grid-higiene', produtos.higiene);
+montarGrid('grid-biscoito', produtos.biscoito);
+montarGrid('grid-mercearia', produtos.mercearia);
+montarGrid('grid-laticinios', produtos.laticinios);
+
+function adicionarCarrinho(nome, preco){
+  carrinho.push({nome, preco});
+  atualizarBadge();
+  renderCarrinho();
+}
+function removerItem(i){
+  carrinho.splice(i,1);
+  atualizarBadge();
+  renderCarrinho();
+}
+function atualizarBadge(){
+  document.getElementById('badge').textContent = carrinho.length;
+  const rodape = document.getElementById('rodapeCarrinho');
+  if(carrinho.length > 0){
+    rodape.classList.add('ativo');
+    document.getElementById('rodapeTexto').textContent = carrinho.length + ' item(ns) no carrinho';
+  } else {
+    rodape.classList.remove('ativo');
+  }
+}
+function renderCarrinho(){
+  const lista = document.getElementById('listaCarrinho');
+  const totalEl = document.getElementById('totalCarrinho');
+  if(carrinho.length === 0){
+    lista.innerHTML = '<div class="carrinho-vazio">Seu carrinho está vazio.<br>Adicione produtos para continuar.</div>';
+    totalEl.textContent = 'R$ 0,00';
+    return;
+  }
+  let total = 0;
+  lista.innerHTML = carrinho.map((item,i)=>{
+    total += parseFloat(item.preco.replace(',','.')) || 0;
+    return `
+      <div class="item-carrinho">
+        <div class="info"><strong>${item.nome}</strong>R$ ${item.preco}</div>
+        <button onclick="removerItem(${i})" title="Remover">✕</button>
+      </div>`;
+  }).join('');
+  totalEl.textContent = 'R$ ' + total.toFixed(2).replace('.',',');
+}
+function toggleCarrinho(){
+  renderCarrinho();
+  document.getElementById('overlayCarrinho').classList.toggle('aberto');
+}
+
+/* ===== FORMA DE PAGAMENTO ===== */
+let formaPagamento = null;
+
+function selecionarPagamento(tipo){
+  formaPagamento = tipo;
+  document.querySelectorAll('.opcao-pagamento').forEach(el=>{
+    el.classList.toggle('selecionada', el.dataset.tipo === tipo);
+  });
+  document.getElementById('areaCartao').style.display = (tipo === 'Cartão de Débito' || tipo === 'Cartão de Crédito') ? 'block' : 'none';
+  document.getElementById('areaPix').style.display = (tipo === 'Pix') ? 'flex' : 'none';
+}
+
+/* ===== QR CODE PIX (padrão EMV / "copia e cola") ===== */
+const PIX_CHAVE = '99984091703';        // TODO: confirmar a chave Pix real da loja (telefone, e-mail, CPF/CNPJ ou aleatória)
+const PIX_NOME = 'SUPERMERCADO TODO DIA';
+const PIX_CIDADE = 'BOM JESUS';
+
+function crc16(payload){
+  let polinomio = 0x1021, resultado = 0xFFFF;
+  for(let i=0;i<payload.length;i++){
+    resultado ^= (payload.charCodeAt(i) << 8);
+    for(let b=0;b<8;b++){
+      resultado = (resultado & 0x8000) ? ((resultado << 1) ^ polinomio) : (resultado << 1);
+      resultado &= 0xFFFF;
+    }
+  }
+  return resultado.toString(16).toUpperCase().padStart(4,'0');
+}
+function campo(id, valor){
+  const tam = valor.length.toString().padStart(2,'0');
+  return id + tam + valor;
+}
+function montarPayloadPix(valor){
+  const gui = campo('00','br.gov.bcb.pix');
+  const chave = campo('01', PIX_CHAVE);
+  const mai = campo('26', gui + chave);
+  let payload =
+    campo('00','01') +
+    mai +
+    campo('52','0000') +
+    campo('53','986') +
+    (valor ? campo('54', valor.toFixed(2)) : '') +
+    campo('58','BR') +
+    campo('59', PIX_NOME.substring(0,25)) +
+    campo('60', PIX_CIDADE.substring(0,15)) +
+    campo('62', campo('05','***'));
+  payload += '6304';
+  return payload + crc16(payload);
+}
+function gerarQRCodePix(){
+  let total = 0;
+  carrinho.forEach(item => total += parseFloat(item.preco.replace(',','.')) || 0);
+  const payload = montarPayloadPix(total);
+  document.getElementById('qrcodePix').innerHTML = '';
+  new QRCode(document.getElementById('qrcodePix'), { text: payload, width: 170, height: 170 });
+  document.getElementById('pixCodigo').textContent = payload;
+  document.getElementById('pixCopiaCola').style.display = 'flex';
+}
+function copiarCodigoPix(){
+  const codigo = document.getElementById('pixCodigo').textContent;
+  navigator.clipboard.writeText(codigo).then(()=> alert('Código Pix copiado!'));
+}
+
+function finalizarPedido(){
+  if(carrinho.length === 0){
+    document.getElementById('textoPedido').textContent = 'Seu carrinho está vazio. Adicione produtos antes de finalizar.';
+    document.getElementById('btnAbrirWhats').style.display = 'none';
+    document.getElementById('modalPedido').classList.add('aberto');
+    return;
+  }
+  const pagamento = formaPagamento || 'A combinar pelo WhatsApp';
+
+  /* agrupa itens repetidos: "2x Produto" */
+  const grupos = {};
+  let total = 0;
+  carrinho.forEach(item => {
+    const valor = parseFloat(item.preco.replace(',','.')) || 0;
+    total += valor;
+    if(!grupos[item.nome]) grupos[item.nome] = {qtd:0, valor:valor};
+    grupos[item.nome].qtd++;
+  });
+
+  let texto = 'Olá! Gostaria de fazer o seguinte pedido:\n\n';
+  texto += 'Quantidade de itens: ' + carrinho.length + '\n\n';
+  Object.keys(grupos).forEach(nome => {
+    const g = grupos[nome];
+    texto += '• ' + g.qtd + 'x ' + nome + ' - R$ ' + (g.qtd * g.valor).toFixed(2).replace('.',',') + '\n';
+  });
+  texto += '\nTotal: R$ ' + total.toFixed(2).replace('.',',');
+  texto += '\nForma de pagamento: ' + pagamento;
+  if(pagamento === 'Pix'){ texto += '\n(Pix gerado pelo site — vou enviar o comprovante aqui)'; }
+  texto += '\n\nAguardo confirmação. Obrigado!';
+
+  const numero = '5599984091703';
+  const link = 'https://wa.me/' + numero + '?text=' + encodeURIComponent(texto);
+
+  /* mostra o resumo na tela e deixa um link real para o WhatsApp (toque do cliente) */
+  document.getElementById('textoPedido').textContent = texto;
+  const btn = document.getElementById('btnAbrirWhats');
+  btn.href = link; btn.style.display = 'block';
+  document.getElementById('modalPedido').classList.add('aberto');
+  /* no site publicado, já abre o WhatsApp direto; o modal fica como reserva */
+  setTimeout(function(){ window.location.href = link; }, 400);
+}
+function fecharModalPedido(){ document.getElementById('modalPedido').classList.remove('aberto'); }
+function copiarPedido(){
+  const t = document.getElementById('textoPedido').textContent;
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(t).then(()=>{ document.querySelector('#modalPedido .btn-sec').textContent='Pedido copiado ✔'; });
+  } else {
+    const r = document.createRange(); r.selectNodeContents(document.getElementById('textoPedido'));
+    const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+    try{ document.execCommand('copy'); }catch(e){}
+  }
+}
+
+/* ===== BUSCA ===== */
+function tirarAcentos(txt){
+  return txt.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+}
+const secoes = ['ofertas','hortifruti','acougue','massas','temperos','bebidas','limpeza','higiene','biscoito','mercearia','laticinios'];
+
+document.getElementById('busca').addEventListener('input', function(){
+  const termo = tirarAcentos(this.value.trim());
+  let totalVisivel = 0;
+
+  secoes.forEach(id=>{
+    const grid = document.getElementById('grid-' + id);
+    const titulo = document.getElementById(id);
+    if(!grid || !titulo) return;
+    let visiveisNaSecao = 0;
+    grid.querySelectorAll('.produto-card').forEach(card=>{
+      const nome = tirarAcentos(card.dataset.nome);
+      const bate = termo === '' || nome.includes(termo);
+      card.style.display = bate ? 'flex' : 'none';
+      if(bate) visiveisNaSecao++;
+    });
+    const mostrarSecao = termo === '' || visiveisNaSecao > 0;
+    titulo.style.display = mostrarSecao ? 'flex' : 'none';
+    grid.style.display = mostrarSecao ? 'grid' : 'none';
+    totalVisivel += visiveisNaSecao;
+  });
+
+  document.getElementById('semResultado').style.display = (termo !== '' && totalVisivel === 0) ? 'flex' : 'none';
+});
+
+/* ===== CARROSSEL ===== */
+let slideAtual = 0;
+const slides = document.querySelectorAll('.slide');
+const dots = document.querySelectorAll('.dot');
+setInterval(()=>{
+  slides[slideAtual].classList.remove('ativo');
+  dots[slideAtual].classList.remove('on');
+  slideAtual = (slideAtual + 1) % slides.length;
+  slides[slideAtual].classList.add('ativo');
+  dots[slideAtual].classList.add('on');
+}, 5000);
+
+/* ===== CONTAGEM REGRESSIVA DO SORTEIO (02 de outubro) ===== */
+function atualizarContagemSorteio(){
+  const el = document.getElementById('contagemRegressiva');
+  if(!el) return;
+  const agora = new Date();
+  let dataSorteio = new Date(agora.getFullYear(), 9, 2, 18, 0, 0); // mês 9 = outubro
+  if(agora > dataSorteio){
+    dataSorteio = new Date(agora.getFullYear()+1, 9, 2, 18, 0, 0);
+  }
+  const diff = dataSorteio - agora;
+  if(diff <= 0){
+    el.innerHTML = '<div class="bloco"><strong>Hoje!</strong><span>é o sorteio</span></div>';
+    return;
+  }
+  const dias = Math.floor(diff / (1000*60*60*24));
+  const horas = Math.floor((diff / (1000*60*60)) % 24);
+  const min = Math.floor((diff / (1000*60)) % 60);
+  const seg = Math.floor((diff / 1000) % 60);
+  el.innerHTML = `
+    <div class="bloco"><strong>${dias}</strong><span>dias</span></div>
+    <div class="bloco"><strong>${String(horas).padStart(2,'0')}</strong><span>horas</span></div>
+    <div class="bloco"><strong>${String(min).padStart(2,'0')}</strong><span>min</span></div>
+    <div class="bloco"><strong>${String(seg).padStart(2,'0')}</strong><span>seg</span></div>
+  `;
+}
+atualizarContagemSorteio();
+setInterval(atualizarContagemSorteio, 1000);
+
+/* ===== HORÁRIO DA LOJA EM TEMPO REAL ===== */
+function atualizarHoraLoja(){
+  const agora = new Date();
+  const hora = agora.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+  document.getElementById('horaLoja').textContent = 'Atualizado agora — ' + hora;
+
+  // Horário de funcionamento: Seg a Sáb, 7h às 21h
+  const diaSemana = agora.getDay(); // 0 = domingo
+  const h = agora.getHours();
+  const aberta = diaSemana !== 0 && h >= 7 && h < 21;
+  const statusEl = document.querySelector('.loc-status');
+  if(statusEl){
+    statusEl.innerHTML = aberta
+      ? '<span class="bolinha-viva"></span> Loja aberta agora'
+      : '<span class="bolinha-viva" style="background:#e0e0e0;box-shadow:none;animation:none;"></span> Loja fechada no momento';
+  }
+}
+atualizarHoraLoja();
+setInterval(atualizarHoraLoja, 1000);
+
+/* ===== TRABALHE CONOSCO — TESTE DE ADMISSÃO ===== */
+const tcPerguntas = [
+  // Matemática — regra de três (3)
+  {cat:"Raciocínio Lógico", pergunta:"Se 5 metros de tecido custam R$ 50,00, quanto custam 8 metros?",
+   opcoes:["R$ 60,00","R$ 70,00","R$ 80,00","R$ 90,00"], certa:2},
+  {cat:"Raciocínio Lógico", pergunta:"Um carro percorre 240 km com 20 litros de combustível. Quantos km percorre com 15 litros?",
+   opcoes:["160 km","180 km","200 km","220 km"], certa:1},
+  {cat:"Raciocínio Lógico", pergunta:"3 funcionários fazem um serviço em 12 dias. Trabalhando no mesmo ritmo, em quantos dias 4 funcionários fariam o mesmo serviço?",
+   opcoes:["8 dias","9 dias","10 dias","12 dias"], certa:1},
+  // Sequência numérica (2)
+  {cat:"Raciocínio Lógico", pergunta:"Complete a sequência: 2, 4, 8, 16, ...",
+   opcoes:["24","28","30","32"], certa:3},
+  {cat:"Raciocínio Lógico", pergunta:"Complete a sequência: 3, 6, 11, 18, 27, ...",
+   opcoes:["36","37","38","40"], certa:2},
+  // Português — por que / porque / por quê / porquê (2)
+  {cat:"Português", pergunta:'Complete: "Não sei ______ você não veio à reunião."',
+   opcoes:["por que","porque","por quê","porquê"], certa:0},
+  {cat:"Português", pergunta:'Complete: "Ele chegou atrasado, ______ o trânsito estava intenso."',
+   opcoes:["por que","porque","por quê","porquê"], certa:1},
+  // Português — mau / mal (2)
+  {cat:"Português", pergunta:'Complete: "Ele é um ______ aluno, nunca estuda."',
+   opcoes:["mal","mau"], certa:1},
+  {cat:"Português", pergunta:'Complete: "Ela se sentiu ______ depois da festa."',
+   opcoes:["mal","mau"], certa:0},
+  // Primeiros socorros (2)
+  {cat:"Primeiros Socorros", pergunta:"O que fazer primeiro ao encontrar uma pessoa desmaiada?",
+   opcoes:["Dar água para beber","Verificar se ela respira e está consciente","Levantar a pessoa rapidamente","Dar tapas no rosto dela"], certa:1},
+  {cat:"Primeiros Socorros", pergunta:"Em caso de queimadura leve, qual é o procedimento correto?",
+   opcoes:["Passar pasta de dente","Resfriar com água corrente limpa","Estourar as bolhas","Passar manteiga ou óleo"], certa:1},
+  // Segurança do trabalho (2)
+  {cat:"Segurança do Trabalho", pergunta:"Qual EPI é obrigatório para trabalhos em altura?",
+   opcoes:["Apenas luvas","Cinto de segurança tipo paraquedista","Apenas óculos de proteção","Nenhum é necessário"], certa:1},
+  {cat:"Segurança do Trabalho", pergunta:"O que significa a sigla EPI?",
+   opcoes:["Equipamento de Proteção Individual","Equipamento de Produção Industrial","Empresa de Prevenção Interna","Equipe de Proteção Interna"], certa:0},
+];
+
+let tcIndice = 0;
+let tcRespostas = new Array(tcPerguntas.length).fill(null);
+
+function abrirTrabalheConosco(){
+  tcIndice = 0;
+  tcRespostas = new Array(tcPerguntas.length).fill(null);
+  document.getElementById('overlayTrabalhe').classList.add('aberto');
+  tcRenderizar();
+}
+function fecharTrabalheConosco(){
+  document.getElementById('overlayTrabalhe').classList.remove('aberto');
+}
+function tcAtualizarBarra(){
+  const pct = Math.round((tcIndice / tcPerguntas.length) * 100);
+  document.getElementById('tcBarra').style.width = pct + '%';
+}
+function tcRenderizar(){
+  tcAtualizarBarra();
+  const q = tcPerguntas[tcIndice];
+  const conteudo = document.getElementById('tcConteudo');
+  conteudo.innerHTML = `
+    <div class="tc-card">
+      <div class="tc-categoria">${q.cat} — Pergunta ${tcIndice+1} de ${tcPerguntas.length}</div>
+      <div class="tc-pergunta">${q.pergunta}</div>
+      <div id="tcOpcoes">
+        ${q.opcoes.map((op,i)=>`<div class="tc-opcao${tcRespostas[tcIndice]===i?' selecionada':''}" onclick="tcSelecionar(${i})">${op}</div>`).join('')}
+      </div>
+      <div class="tc-nav">
+        <button class="tc-btn tc-btn-voltar" onclick="tcVoltar()" ${tcIndice===0?'disabled style="visibility:hidden;"':''}>Voltar</button>
+        <button class="tc-btn tc-btn-avancar" id="tcBtnAvancar" onclick="tcAvancar()" ${tcRespostas[tcIndice]===null?'disabled':''}>
+          ${tcIndice === tcPerguntas.length-1 ? 'Ver resultado' : 'Próxima'}
+        </button>
+      </div>
+    </div>
+  `;
+}
+function tcSelecionar(i){
+  tcRespostas[tcIndice] = i;
+  tcRenderizar();
+}
+function tcVoltar(){
+  if(tcIndice > 0){ tcIndice--; tcRenderizar(); }
+}
+function tcAvancar(){
+  if(tcRespostas[tcIndice] === null) return;
+  if(tcIndice < tcPerguntas.length - 1){
+    tcIndice++;
+    tcRenderizar();
+  } else {
+    tcMostrarResultado();
+  }
+}
+function tcMostrarResultado(){
+  document.getElementById('tcBarra').style.width = '100%';
+  let acertos = 0;
+  tcPerguntas.forEach((q,i)=>{ if(tcRespostas[i] === q.certa) acertos++; });
+  const pct = Math.round((acertos / tcPerguntas.length) * 100);
+  const aprovado = pct >= 40;
+  const conteudo = document.getElementById('tcConteudo');
+  conteudo.innerHTML = `
+    <div class="tc-card tc-resultado">
+      <div class="tc-categoria">Resultado do teste</div>
+      <div class="tc-porcentagem">${pct}%</div>
+      <div>${acertos} de ${tcPerguntas.length} questões corretas</div>
+      ${aprovado ? `
+        <div class="tc-msg-aprovado">Agradecemos por sua dedicação e ficamos felizes em querer fazer parte do nosso quadro de colaboradores. Em breve entraremos em contato.</div>
+        <div style="width:100%; text-align:left;">
+          <label style="font-size:13px; font-weight:700;">Seu nome completo:</label>
+          <input type="text" id="tcNome" class="tc-campo-telefone" placeholder="Digite seu nome">
+          <label style="font-size:13px; font-weight:700; margin-top:8px; display:block;">Deixe seu telefone para contato:</label>
+          <input type="tel" id="tcTelefone" class="tc-campo-telefone" placeholder="(99) 99999-9999">
+          <button class="tc-btn tc-btn-avancar" style="width:100%; margin-top:10px;" onclick="tcEnviarTelefone(${pct})">Enviar</button>
+          <div id="tcConfirmacao"></div>
+        </div>
+      ` : `
+        <div class="tc-msg-reprovado">Obrigado por participar do nosso teste! No momento sua pontuação ficou abaixo do necessário, mas fique de olho em novas oportunidades.</div>
+      `}
+      <button class="tc-btn tc-btn-voltar" style="width:100%;" onclick="fecharTrabalheConosco()">Fechar</button>
+    </div>
+  `;
+}
+function tcEnviarTelefone(pct){
+  const nome = document.getElementById('tcNome').value.trim();
+  const tel = document.getElementById('tcTelefone').value.trim();
+  if(!nome){ alert('Digite seu nome completo.'); return; }
+  if(!tel){ alert('Digite um telefone para contato.'); return; }
+  const texto = `Olá! Meu nome é ${encodeURIComponent(nome)} e fiz o teste de admissão no site, fui aprovado(a) com ${pct}%25 de acertos. Meu telefone para contato é: ${encodeURIComponent(tel)}`;
+  const numero = '5599984091703';
+  const link = `https://wa.me/${numero}?text=${texto}`;
+  const a = document.getElementById('linkFinalizarWhats');
+  a.href = link;
+  a.click();
+  document.getElementById('tcConfirmacao').innerHTML = '<div class="tc-enviado">✓ Enviado! Entraremos em contato em breve.</div>';
+}
+</script>
+<a id="linkFinalizarWhats" href="#" target="_blank" rel="noopener" style="display:none;"></a>
+
+<div class="overlay-carrinho" id="overlayTrabalhe" onclick="if(event.target===this) fecharTrabalheConosco()">
+  <div class="painel-trabalhe">
+    <div class="painel-topo">
+      <h3>Trabalhe Conosco</h3>
+      <button class="fechar-painel" onclick="fecharTrabalheConosco()">✕</button>
+    </div>
+    <div class="tc-barra"><div class="tc-barra-preenchida" id="tcBarra" style="width:0%;"></div></div>
+    <div id="tcConteudo"></div>
+  </div>
+</div>
+</body>
+</html>
